@@ -11,6 +11,7 @@ import obis_codemap as data
 
 print("DSMR 5.0 P1 uitlezen")
 connected = False
+telegram_list = []
 ser = serial.Serial()
 
 
@@ -123,8 +124,6 @@ signal.signal(signal.SIGINT, signal.default_int_handler)
 open_connection()
 
 while connected:
-    telegram_list = []
-
     try:
         if (ser.inWaiting() > 0):
             telegram_lines = read_telegram(ser)
