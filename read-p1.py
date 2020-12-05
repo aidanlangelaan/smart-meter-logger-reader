@@ -36,10 +36,11 @@ def open_connection():
 
 
 def read_telegram(ser):
-    p1_counter = 0
+    found_end = False
+    telegram_lines = []
 
-    print('Start reading lines')
-    while p1_counter < 26:
+    print('\r\nStart reading lines')
+    while not found_end:
         telegram_line = ''
 
         try:
@@ -50,9 +51,12 @@ def read_telegram(ser):
 
         telegram_string = str(raw_line)
         telegram_line = telegram_string.strip()
+        telegram_lines.append(telegram_line)
 
         print(telegram_line)
-        p1_counter += 1
+
+        if (telegram_line.startswith('!')):
+            found_end = True
 
 
 def close_connection():
