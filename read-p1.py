@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 # Script for reading and parsing the DSMR 5.0 smart-meter telegrams
 # 2020-12 v1.0
+import json
+import re
 import serial
 import signal
 import sys
@@ -42,7 +44,7 @@ def close_connection():
 
     # Close port and show status
     try:
-        print('Completed reading telegram')
+        print('Completed reading stream')
         connected = False
         ser.close()
     except:
@@ -76,6 +78,8 @@ def read_telegram(ser):
 
 
 def parse_telegram(telegram_lines):
+    telegram_object = {}
+
     for line in telegram_lines:
         fields = line.replace(")", "").split("(")
         # Check for unknown obis code
@@ -85,7 +89,25 @@ def parse_telegram(telegram_lines):
 
         field_name = data.obis_codemap[fields[0]]
 
-        print('found field name %s' % field_name)
+        # Don't format log messages
+        if field_name.endswith("log"):
+            telegram_object[field_name] = str(fields[1:])
+        else:
+            telegram_object[field_name] = format_value(fields[1])
+
+        telegram_object[field_name] = format_value()
+
+    return json.dumps(telegram_object)
+
+
+def format_value(value):
+    # remove leading zeroes for numbers like 000123.123
+    value = re.sub("^0*([1-9])", "\\1", value)
+    # remove leading zeroes (except the last one) for numbers like 000000.123
+    value = re.sub("^0*([0-9]\.)", "\\1", value)
+    # remove trailing unit's like "*kWh", "*kW", "*V", "*A", "*m3", "*s",...
+    value = re.sub("\*.*", "", value)
+    return value
 
 
 # Main program
@@ -100,6 +122,8 @@ while connected:
 
             # Parse lines to JSON
             telegram_json = parse_telegram(telegram_lines)
+
+            print('result: %s' % telegram_json)
 
             # Post to API
 
