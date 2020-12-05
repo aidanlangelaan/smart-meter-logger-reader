@@ -45,7 +45,7 @@ def close_connection():
 
     # Close port and show status
     try:
-        print('Completed reading stream')
+        print('Closing connection')
         connected = False
         ser.close()
     except:
@@ -57,7 +57,7 @@ def read_telegram(ser):
     found_end = False
     telegram_lines = []
 
-    print('Start reading lines')
+    print('Start reading telegram')
     while not found_end:
         telegram_line = ''
 
@@ -112,8 +112,10 @@ def format_value(value):
 
 
 def post_telegrams_to_api(telegram_list):
+    print('Posting parsed telegrams to api')
+
     telegram_json = json.dumps(telegram_list)
-    print('posting to api: %s' % telegram_json)
+    print('telegram json: %s' % telegram_json)
 
     # TODO implement API connection
 
