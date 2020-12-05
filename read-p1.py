@@ -5,7 +5,7 @@ import serial
 import signal
 import sys
 import time
-import obis_codemap
+import obis_codemap as data
 
 print("DSMR 5.0 P1 uitlezen")
 connected = False
@@ -80,7 +80,7 @@ def parse_telegram(telegram_lines):
         fields = line.replace(")", "").split("(")
         print(fields)
         # Check for unknown obis code
-        if fields[0] not in obis_codemap:
+        if fields[0] not in data.obis_codemap:
             print('unknown obis code: %' % fields[0])
             continue
 
