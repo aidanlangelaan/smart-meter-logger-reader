@@ -68,10 +68,9 @@ def read_telegram(ser):
         telegram_line = telegram_string.strip()
         telegram_lines.append(telegram_line)
 
-        print(telegram_line)
-
         if (telegram_line.startswith('!')):
             found_end = True
+            print('Found end of telegram')
 
     return telegram_lines
 
