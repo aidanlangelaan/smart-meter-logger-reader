@@ -5,6 +5,7 @@ import serial
 import signal
 import sys
 import time
+import obis_codemap
 
 print("DSMR 5.0 P1 uitlezen")
 connected = False
@@ -35,11 +36,25 @@ def open_connection():
         sys.exit('Error opening %s. Program stopped.' % ser.name)
 
 
+def close_connection():
+    global connected
+    global ser
+
+    # Close port and show status
+    try:
+        print('Completed reading telegram')
+        connected = False
+        ser.close()
+    except:
+        connected = False
+        print('Could not close the serial port.')
+
+
 def read_telegram(ser):
     found_end = False
     telegram_lines = []
 
-    print('\r\nStart reading lines')
+    print('Start reading lines')
     while not found_end:
         telegram_line = ''
 
@@ -58,19 +73,21 @@ def read_telegram(ser):
         if (telegram_line.startswith('!')):
             found_end = True
 
+    return telegram_lines
 
-def close_connection():
-    global connected
-    global ser
 
-    # Close port and show status
-    try:
-        print('Completed reading telegram')
-        connected = False
-        ser.close()
-    except:
-        connected = False
-        print('Could not close the serial port.')
+def parse_telegram(telegram_lines):
+    for line in telegram_lines:
+        fields = line.replace(")", "").split("(")
+
+        # Check for unknown obis code
+        if fields[0] not in obis_codemap:
+            print('unknown obis code: %' % fields[0])
+            continue
+
+        field_name = obis_codemap[fields[0]]
+
+        print('found field name %' % field_name)
 
 
 # Main program
@@ -81,7 +98,13 @@ open_connection()
 while connected:
     try:
         if (ser.inWaiting() > 0):
-            read_telegram(ser)
+            telegram_lines = read_telegram(ser)
+
+            # Parse lines to JSON
+            telegram_json = parse_telegram(telegram_lines)
+
+            # Post to API
+
         time.sleep(1)
     except KeyboardInterrupt:
         print('User cancelled, stopping program')
