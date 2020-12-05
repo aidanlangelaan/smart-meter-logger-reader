@@ -30,7 +30,7 @@ while p1_counter < 26:
     telegram_line = ''
 
     try:
-        raw_line = ser.read()
+        raw_line = ser.readline()
     except:
         sys.exit("Could not read from serial port %s. Program stopped." % ser.name)
 
