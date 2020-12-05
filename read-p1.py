@@ -128,13 +128,10 @@ while connected:
         if (ser.inWaiting() > 0):
             telegram_lines = read_telegram(ser)
             telegram_object = parse_telegram(telegram_lines)
-
             telegram_list.append(telegram_object)
 
-            print('count %i' % len(telegram_list))
-
             if (len(telegram_list) == 10):
-                print('post to api %i telegrams' % len(telegram_list))
+                post_telegrams_to_api(telegram_list)
                 telegram_list = []
 
         time.sleep(1)
