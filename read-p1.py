@@ -71,8 +71,6 @@ def read_telegram(ser):
         if (telegram_line.startswith('!')):
             found_end = True
             print('Found end of telegram')
-        else:
-            print('Not found end yet')
 
     return telegram_lines
 
@@ -80,7 +78,7 @@ def read_telegram(ser):
 def parse_telegram(telegram_lines):
     for line in telegram_lines:
         fields = line.replace(")", "").split("(")
-
+        print(fields)
         # Check for unknown obis code
         if fields[0] not in obis_codemap:
             print('unknown obis code: %' % fields[0])
