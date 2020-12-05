@@ -82,9 +82,10 @@ def parse_telegram(telegram_lines):
 
     for line in telegram_lines:
         fields = line.replace(")", "").split("(")
-        # Check for unknown obis code
+
         if fields[0] not in data.obis_codemap:
-            print('unknown obis code: %s' % fields[0])
+            # Uncomment to show unknown obis codes
+            #print('unknown obis code: %s' % fields[0])
             continue
 
         field_name = data.obis_codemap[fields[0]]
@@ -130,6 +131,8 @@ while connected:
             telegram_object = parse_telegram(telegram_lines)
 
             telegram_list.append(telegram_object)
+
+            print('count %i' % telegram_list.count)
 
             if (telegram_list.count == 10):
                 print('post to api %i telegrams' % telegram_list.count)
