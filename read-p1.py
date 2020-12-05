@@ -81,12 +81,12 @@ def parse_telegram(telegram_lines):
         print(fields)
         # Check for unknown obis code
         if fields[0] not in data.obis_codemap:
-            print('unknown obis code: %' % fields[0])
+            print('unknown obis code: %s' % fields[0])
             continue
 
         field_name = obis_codemap[fields[0]]
 
-        print('found field name %' % field_name)
+        print('found field name %s' % field_name)
 
 
 # Main program
