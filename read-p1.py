@@ -64,7 +64,7 @@ def read_telegram(ser):
             sys.exit(
                 'Could not read from serial port %s. Program stopped.' % ser.name)
 
-        telegram_string = str(raw_line)
+        telegram_string = raw_line.decode()
         telegram_line = telegram_string.strip()
         telegram_lines.append(telegram_line)
 
