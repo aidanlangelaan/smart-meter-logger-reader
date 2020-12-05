@@ -95,7 +95,8 @@ def parse_telegram(telegram_lines):
         else:
             telegram_object[field_name] = format_value(fields[1])
 
-    return json.dumps(telegram_object)
+    return telegram_object
+    # return json.dumps(telegram_object)
 
 
 def format_value(value):
@@ -108,22 +109,31 @@ def format_value(value):
     return value
 
 
+def post_telegrams_to_api(telegram_list):
+    telegram_json = json.dumps(telegram_list)
+    print('posting to api: %s' % telegram_json)
+
+    # TODO implement API connection
+
+
 # Main program
 signal.signal(signal.SIGINT, signal.default_int_handler)
 
 open_connection()
 
 while connected:
+    telegram_list = []
+
     try:
         if (ser.inWaiting() > 0):
             telegram_lines = read_telegram(ser)
+            telegram_object = parse_telegram(telegram_lines)
 
-            # Parse lines to JSON
-            telegram_json = parse_telegram(telegram_lines)
+            telegram_list.append(telegram_object)
 
-            print('result: %s' % telegram_json)
-
-            # Post to API
+            if (telegram_list.count == 10):
+                print('post to api %i telegrams' % telegram_list.count)
+                telegram_list = []
 
         time.sleep(1)
     except KeyboardInterrupt:
