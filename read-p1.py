@@ -132,10 +132,10 @@ while connected:
 
             telegram_list.append(telegram_object)
 
-            print('count %i' % telegram_list.count)
+            print('count %i' % telegram_list.count())
 
-            if (telegram_list.count == 10):
-                print('post to api %i telegrams' % telegram_list.count)
+            if (telegram_list.count() == 10):
+                print('post to api %i telegrams' % telegram_list.count())
                 telegram_list = []
 
         time.sleep(1)
