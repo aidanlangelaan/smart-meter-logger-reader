@@ -14,7 +14,7 @@ As for the P1 cable, I bought this from [SOS Solutions](https://www.sossolutions
 
 ### Self made
 
-The issue with self made cabels is that you need the required knowledge of the schema's to properly route the wires inside the cable to the RJ12 connector. Also you will probably need to add extra resistors depending on the smart meter you want to read from (DSMR 4 or 5). Various websites contain the correct schema's to help you such as this [Tweakers forum](https://gathering.tweakers.net/forum/list_messages/1578510). This is quite error prone to be honest and as I don't have the required tools or exact knowledge (and perhaps a bit lazy 😇), this wasn't an option for me.
+The issue with self made cabels is that you need the required knowledge of the schema's to properly route the wires inside the cable to the RJ12 connector. Also you will probably need to add extra resistors depending on the smart meter you want to read from (DSMR 4 or 5). Various websites contain the correct schema's to help you such as this [Tweakers forum](https://gathering.tweakers.net/forum/list_messages/1578510). This is quite error prone to be honest and as I don't have the required tools or exact knowledge, this wasn't an option for me.
 
 ### China stores
 
@@ -23,3 +23,11 @@ Buying from China stores may be cheaper, but while doing my research into the ri
 ### Ready to use from previously mentioned stores
 
 Using the cable from SOS Solutions doesn't require any hardware changes as the cable contains a PCB with all the required resistors for reading DSMR 4 and 5 meters. I just plugged in the cable to both the Raspberry Pi and the smart meter and was ready to go!
+
+## Sources
+
+For making the script I made use of the various sources listed bellow.
+
+- [Tweakers.net - Slimme meter uitlezen via P1-poort](https://gathering.tweakers.net/forum/list_messages/1578510)
+- [Ge Janssen - Slimme meter uitlezen met Raspberry Pi](http://gejanssen.com/howto/Slimme-meter-uitlezen/)
+- [www.kapper.com - P1 energy meter reader using python in Docker](https://www.kaper.com/software/p1-energy-meter-reader-using-python-in-docker/)
