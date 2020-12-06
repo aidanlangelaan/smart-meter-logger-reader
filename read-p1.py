@@ -143,5 +143,6 @@ while connected:
         sys.exit()
 
 close_connection()
+
 print('Program completed')
 sys.exit()
