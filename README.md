@@ -32,7 +32,7 @@ For making the script I made use of the various sources listed bellow.
 - [Ge Janssen - Slimme meter uitlezen met Raspberry Pi](http://gejanssen.com/howto/Slimme-meter-uitlezen/)
 - [www.kapper.com - P1 energy meter reader using python in Docker](https://www.kaper.com/software/p1-energy-meter-reader-using-python-in-docker/)
 
-# Setting up Raspberry Pi
+# Setting up the Raspberry Pi
 
 I had an initial setup (without POST to the backend) running on my RPi. However, the project lay dormant for a year and when I came back to it my internet network has changed significantly. Using various methodes I was not able to connect into the RPi. Therefore I decided to backup the existing image and startout anew. This also allowed me to document any issues I ran into while doing so.
 
@@ -112,4 +112,42 @@ At the same time I configured my router reserve the selected IP for the MAC-addr
 
 Within a minute the RPi showed back online over Wi-Fi, with the supplied static IP!
 
+## Step 5: Enable Serial Port interface
 
+You can't out-of-the-box read from the usb port, first you need to enable the serialisation interface using the following steps:. 
+
+```
+# Start by opening the Raspberry Pi configuration tool
+sudo raspi-config
+
+# Navigate to the serial port config
+3 Interface Options -> I6 Serial Port
+
+# Enable the options
+Yes -> OK
+```
+
+The serial port is now enabled.
+
+## Step 6: Validate setup
+
+At this point I moved the RPi to het meter closet, reconnected the power and plugged in the USB cable that's connected to the smartmeter. All starts up without issues and is accesable through SSH. Now it's time to validate if the configuration so far has worked. 
+
+First install cu to read the telegrams from the USB port: `sudo apt-get install cu`. Now we need to check if the RPi can see the connected USB. By running `ls -l /dev/ttyU*` you should see at least 1 row that results in the path of the connected port. If you get an error simular to `No such file or directory` it means the RPi hasn't properly detected the connected USB. Make sure the USB is plugged in securely and that you have followed step 5 to enable the Serial Port interface.
+
+Depending on the E/D-SMR version you need different settings to read from the smart meter:
+
+| Parameter | [DSMR 4.2](https://www.netbeheernederland.nl/_upload/Files/Slimme_meter_15_7b581ff014.pdf) | [ESMR 5.0](https://www.netbeheernederland.nl/_upload/Files/Slimme_meter_15_a727fce1f1.pdf) |
+|-----------|----------|----------|
+| Baud rate | 115200   | 115200   |
+| Data bits | 7        | 8        |
+| Parity    | Even     | None     |
+| Stop bits | 1        | 1        |
+
+Check your smart meter to make sure you are using the right settings. If you can't find it on the smart meter itself, you will probably find what version it is by looking it up in Google.
+
+In my case I have a ESMR 5.0 meter so will use the following command:
+
+`cu -l /dev/ttyUSB0 -s 115200 --parity=none -E q`
+
+You should now get a stream of telegrams from your smart meter. I believe most meters will return a telegram every 1 to 10 seconds. To exit the serial output hit `q`.
