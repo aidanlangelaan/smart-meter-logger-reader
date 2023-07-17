@@ -11,23 +11,31 @@ import obis_codemap as data
 
 print("DSMR 5.0 P1 uitlezen")
 connected = False
+sleep_time = 10
+max_telegram_count = 1
+
+baudrate = 115200
+bytesize = serial.SEVENBITS
+parity = serial.PARITY_EVEN
+stopbits = serial.STOPBITS_ONE
+port = "/dev/ttyUSB0"
+
 telegram_list = []
 ser = serial.Serial()
-
 
 def open_connection():
     global connected
     global ser
 
     # Set serial port config
-    ser.baudrate = 115200
-    ser.bytesize = serial.SEVENBITS
-    ser.parity = serial.PARITY_EVEN
-    ser.stopbits = serial.STOPBITS_ONE
+    ser.baudrate = baudrate
+    ser.bytesize = bytesize
+    ser.parity = parity
+    ser.stopbits = stopbits
     ser.xonxoff = 0
     ser.rtscts = 0
     ser.timeout = 20
-    ser.port = "/dev/ttyUSB0"
+    ser.port = port
 
     # Open the connection
     try:
@@ -131,11 +139,11 @@ while connected:
             telegram_object = parse_telegram(telegram_lines)
             telegram_list.append(telegram_object)
 
-            if (len(telegram_list) == 10):
+            if (len(telegram_list) == max_telegram_count):
                 post_telegrams_to_api(telegram_list)
                 telegram_list = []
 
-        time.sleep(10)
+        time.sleep(sleep_time)
     except KeyboardInterrupt:
         print('User cancelled, stopping program')
         close_connection()
