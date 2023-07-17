@@ -98,7 +98,6 @@ def parse_telegram(telegram_lines):
             telegram_object[field_name] = format_value(fields[1])
 
     return telegram_object
-    # return json.dumps(telegram_object)
 
 
 def format_value(value):
