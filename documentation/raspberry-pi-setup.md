@@ -118,4 +118,4 @@ In my case I have a ESMR 5.0 meter so will use the following command:
 
 You should now get a stream of telegrams from your smart meter. I believe most meters will return a telegram every 1 to 10 seconds. To exit the serial output hit `q`.
 
-The setup of the RPi has now been completed. The next step is to setup the application itself, which will regularly read the telegrams and post them to the backend service. Please continue to [the application setup](other_file.md).
+The setup of the RPi has now been completed. The next step is to setup the application itself, which will regularly read the telegrams and post them to the backend service. Please continue to [the application setup](application-setup.md).
