@@ -1,6 +1,6 @@
 #!/usr/bin/python3
-# Script for reading and parsing the DSMR 5.0 smart-meter telegrams
-# 2020-12 v1.0
+# Script for reading and parsing the ESMR 5.0 smart-meter telegrams
+# 2023-07 v1.0
 import json
 import re
 import serial
