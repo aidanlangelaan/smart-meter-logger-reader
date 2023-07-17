@@ -136,7 +136,7 @@ while connected:
                 post_telegrams_to_api(telegram_list)
                 telegram_list = []
 
-        time.sleep(1)
+        time.sleep(10)
     except KeyboardInterrupt:
         print('User cancelled, stopping program')
         close_connection()
