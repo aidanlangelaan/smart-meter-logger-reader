@@ -32,11 +32,11 @@ For making the script I made use of the various sources listed bellow.
 - [Ge Janssen - Slimme meter uitlezen met Raspberry Pi](http://gejanssen.com/howto/Slimme-meter-uitlezen/)
 - [www.kapper.com - P1 energy meter reader using python in Docker](https://www.kaper.com/software/p1-energy-meter-reader-using-python-in-docker/)
 
-## Setting up Raspberry Pi
+# Setting up Raspberry Pi
 
 I had an initial setup (without POST to the backend) running on my RPi. However, the project lay dormant for a year and when I came back to it my internet network has changed significantly. Using various methodes I was not able to connect into the RPi. Therefore I decided to backup the existing image and startout anew. This also allowed me to document any issues I ran into while doing so.
 
-### Step 1: install OS (using Windows)
+## Step 1: Install the OS (using Windows)
 
 For this I used the default software provided by Raspberry Pi themselves, Raspberry Pi Imager (v1.7.5). With this application I first formatted the SD-card. As I couldn't see if I was required to do so first or that the application would do that automatically, I decided to implicitly format the SD-card first. When selecting the Operation System you can select an option to format the SD-card to FAT32. 
 
@@ -52,8 +52,64 @@ I then selected de recommended Raspberry Pi OS (32-bit) and the SD-card. The las
 
 After selecting the SD-card I started writing the OS by clicking WRITE.
 
-### Step 2: connecting for the first time
+## Step 2: Connecting for the first time
 
 After the software completed writing the OS to the SD-card, I took it out of my laptop, put it into the RPi and plugged in the power suply. After this I waited at least 15 minutes so that the RPi could do its thing and would have completed any setup before attempting to connect. 
 
-While waiting, I used Advanced IP Scanner to check if I could already see it show up in my network. 
+While waiting, I used Advanced IP Scanner to check if I could already see it show up in my network. Here I ran into my first issue: no apparent network connection. Even though I did set it up correctly before writing the OS to the SD-card, the RPi wasn't showing up in my network. So after 30 minutes I connected it directly to my network by cable, after which I could connect over SSH. All other settings had been correctly configured so I'm not sure what went wrong.
+
+## Step 3: Updating and preparing the OS
+
+After I was able to connect, I first ran the following commands to make sure the OS was up-to-date:
+
+```
+sudo apt update
+sudo apt upgrade
+```
+
+To make sure network-manager was already installed i ran:
+
+`sudo apt install network-manager`
+
+Then I ran `sudo raspi-config` to enter the RPi configuration. Here I changed the following settings:
+
+```
+# To update the config tool
+8 Update      
+
+# To allow network configuration using the newer NetworkManager instead of the old dhcpcd
+6 Advanced Options -> AA Network Config -> 2 NetworkManager     
+
+# To make full use of all available room on the SD-card
+6 Advanced Options -> A1 Expand Filesystem
+```
+
+I then selected finish and rebooted the RPi.
+
+## Step 4: Static IP address
+
+I wanted the raspberry pi to be accessible using a static IP address, when connected through Wi-Fi. Partially due to not having a network cable available in the meter cupboard, but also so that I can connect the RPi by wire should I have any issues with the Wi-Fi connection. Because we selected to use the NetworkManager in the privious step and I'm settng the RPi up over SSH, I have to use the NetworkManager command line (mncli) to configure the network.
+
+First I needed the name of the current Wi-Fi connection:
+`nmcli dev status`
+
+This shows me all network devices, the type, state and connection. As I'm altering the Wi-Fi connection I took note of the value in the CONNECTION column. I then checked my network to confirm what IP I could use and then used the following commands to set it up (yes you can also use a 1-liner but doing it this way makes sure I don't easily make a typo:
+
+```
+sudo nmcli con edit {CONNECTION_VALUE}
+set ipv4.method manual
+set ipv4.address 192.168.1.3/24
+set ipv4.gateway 192.168.1.1
+save
+quit
+```
+
+To complete and activate the connection run:
+`sudo nmcli con edit {CONNECTION_VALUE}`
+
+At the same time I configured my router reserve the selected IP for the MAC-address of the RPi. To finish of and test if the connection was working, I ran the following command to restart the RPi and quikly disconnected the network cable:
+`sudo shutdown -r now`
+
+Within a minute the RPi showed back online over Wi-Fi, with the supplied static IP!
+
+
