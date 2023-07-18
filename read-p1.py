@@ -97,6 +97,9 @@ def parse_telegram(lines):
     for line in lines:
         fields = line.replace(")", "").split("(")
 
+        if (fields[0].strip() == ''):
+            continue
+
         if fields[0] not in data.obis_codemap:
             # Uncomment to show unknown obis codes
             print(f'unknown obis code: {fields[0]}')
