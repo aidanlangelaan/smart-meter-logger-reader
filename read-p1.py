@@ -161,8 +161,8 @@ while CONNECTED:
                 post_telegrams_to_api(telegram_list)
                 telegram_list = []
 
-        if (args.mode == 'cronjob'):
-            break
+                if (args.mode == 'cronjob'):
+                    break
 
         time.sleep(SLEEP_TIME)
     except KeyboardInterrupt:
