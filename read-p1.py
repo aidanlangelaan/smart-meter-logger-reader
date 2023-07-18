@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# Script for reading and parsing the ESMR 5.0 smart-meter telegrams
+# Script for reading and parsing smart-meter telegrams
 # 2023-07 v1.0
 import argparse
 import json
@@ -13,7 +13,9 @@ import time
 CONNECTED = False
 SLEEP_TIME = 10
 MAX_TELEGRAM_COUNT = 1
+MODE = 'cronjob'
 
+SMART_METER_VERSION = '5.0'
 BAUDRATE = 115200
 BYTE_SIZE = serial.SEVENBITS
 PARITY = serial.PARITY_EVEN
@@ -128,11 +130,21 @@ def post_telegrams_to_api(telegrams):
 # Main program
 signal.signal(signal.SIGINT, signal.default_int_handler)
 
+# Define and parse command line arguments
 parser = argparse.ArgumentParser(description='Read and parse smart meter telegrams', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-parser.add_argument('-v', '--version', help='The version of of your smartmeter, e.g 5.0', default='5.0')
+parser.add_argument('-v', '--version', help='The version of of your smartmeter', choices=['4.2', '5.0'], type=str, default=SMART_METER_VERSION)
+parser.add_argument('-c', '--count', help='Amount of telegrams to handle in a single run', type=int, default=MAX_TELEGRAM_COUNT)
+parser.add_argument('mode', help='The way you will be using this script', choices=['continuous', 'cronjob'], default=MODE)
 args = parser.parse_args()
 
-print(f'E/D-SMR {args.version} uitlezen')
+SMART_METER_VERSION = args.version if args.version else SMART_METER_VERSION
+MAX_TELEGRAM_COUNT = args.count if args.count else MAX_TELEGRAM_COUNT
+MODE = args.mode if args.mode else MODE
+
+if (SMART_METER_VERSION == '4.2'):
+    print(f'DSMR {args.version} uitlezen')
+else:
+    print(f'ESMR {args.version} uitlezen')
 
 open_connection()
 
@@ -148,6 +160,9 @@ while CONNECTED:
             if (len(telegram_list) == MAX_TELEGRAM_COUNT):
                 post_telegrams_to_api(telegram_list)
                 telegram_list = []
+
+        if (args.mode == 'cronjob'):
+            break
 
         time.sleep(SLEEP_TIME)
     except KeyboardInterrupt:
