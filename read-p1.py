@@ -17,8 +17,8 @@ MODE = 'cronjob'
 
 SMART_METER_VERSION = '5.0'
 BAUDRATE = 115200
-BYTE_SIZE = serial.SEVENBITS
-PARITY = serial.PARITY_EVEN
+BYTE_SIZE = serial.EIGHTBITS
+PARITY = serial.PARITY_NONE
 STOP_BITS = serial.STOPBITS_ONE
 PORT = "/dev/ttyUSB0"
 SERIAL_CONNECTION = serial.Serial()
@@ -125,7 +125,7 @@ def post_telegrams_to_api(telegrams):
     print('Posting parsed telegrams to api')
 
     telegram_json = json.dumps(telegrams)
-    print('telegram json: %s' % telegram_json)
+    print(telegram_json)
 
     # TODO implement API connection
 
@@ -140,21 +140,29 @@ parser.add_argument('-v', '--version', help='The version of of your smartmeter',
                     choices=['4.2', '5.0'], type=str, default=SMART_METER_VERSION)
 parser.add_argument('-c', '--count', help='Amount of telegrams to handle in a single run',
                     type=int, default=MAX_TELEGRAM_COUNT)
+parser.add_argument('-p', '--port', help='Which port to connect to',
+                    type=str, default=PORT)
 parser.add_argument('mode', help='The way you will be using this script', choices=[
                     'continuous', 'cronjob'], default=MODE)
 args = parser.parse_args()
 
 SMART_METER_VERSION = args.version if args.version else SMART_METER_VERSION
 MAX_TELEGRAM_COUNT = args.count if args.count else MAX_TELEGRAM_COUNT
+PORT = args.port if args.port else PORT
 MODE = args.mode if args.mode else MODE
 
 if (SMART_METER_VERSION == '4.2'):
     print(f'DSMR {args.version} uitlezen')
+    BAUDRATE = 115200
+    BYTE_SIZE = serial.SEVENBITS
+    PARITY = serial.PARITY_EVEN
+    STOP_BITS = serial.STOPBITS_ONE
 else:
     print(f'ESMR {args.version} uitlezen')
-
-print(f'max telegram count: {MAX_TELEGRAM_COUNT}')
-print(f'mode: {MODE}')
+    BAUDRATE = 115200
+    BYTE_SIZE = serial.EIGHTBITS
+    PARITY = serial.PARITY_NONE
+    STOP_BITS = serial.STOPBITS_ONE
 
 open_connection()
 
@@ -165,8 +173,6 @@ while CONNECTED:
             lines = read_telegram()
             parsed_telegram = parse_telegram(lines)
             telegram_list.append(parsed_telegram)
-
-            print(f'current count: {len(telegram_list)}')
 
             if (len(telegram_list) == MAX_TELEGRAM_COUNT):
                 post_telegrams_to_api(telegram_list)
