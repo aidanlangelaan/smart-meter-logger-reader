@@ -82,7 +82,7 @@ def read_telegram():
         telegram_line = telegram_string.strip()
         telegram_lines.append(telegram_line)
 
-        print(*telegram_line, sep = "\n")
+        print(*telegram_line, sep="\n")
 
         if (telegram_line.startswith('!')):
             found_end = True
@@ -99,7 +99,7 @@ def parse_telegram(lines):
 
         if fields[0] not in data.obis_codemap:
             # Uncomment to show unknown obis codes
-            # print('unknown obis code: %s' % fields[0])
+            print(f'unknown obis code: {fields[0]}')
             continue
 
         field_name = data.obis_codemap[fields[0]]
