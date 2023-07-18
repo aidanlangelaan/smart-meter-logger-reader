@@ -64,7 +64,7 @@ def close_connection():
 
 def read_telegram():
     global SERIAL_CONNECTION
-    error_count = 0;
+    error_count = 0
 
     found_end = False
     telegram_lines = []
@@ -74,7 +74,7 @@ def read_telegram():
         telegram_line = ''
 
         if (error_count > 10):
-            return None;
+            return None
 
         try:
             raw_line = SERIAL_CONNECTION.readline()
@@ -107,7 +107,7 @@ def parse_telegram(lines):
             continue
 
         if fields[0] not in data.obis_codemap:
-            print(f'unknown obis code: {working_field}')
+            print(f'unknown obis code: {working_field}, line: {line}')
             continue
 
         field_name = data.obis_codemap[working_field]
