@@ -3,15 +3,15 @@
 # 2023-07 v1.0
 import argparse
 import json
-import obis_codemap as data
 import re
-import serial
 import signal
 import sys
 import time
+import serial
+import obis_codemap as data
 
 CONNECTED = False
-SLEEP_TIME = 10
+SLEEP_TIME = 1
 MAX_TELEGRAM_COUNT = 1
 MODE = 'cronjob'
 
@@ -22,6 +22,7 @@ PARITY = serial.PARITY_EVEN
 STOP_BITS = serial.STOPBITS_ONE
 PORT = "/dev/ttyUSB0"
 SERIAL = serial.Serial()
+
 
 def open_connection():
     global CONNECTED
@@ -94,7 +95,7 @@ def parse_telegram(lines):
 
         if fields[0] not in data.obis_codemap:
             # Uncomment to show unknown obis codes
-            #print('unknown obis code: %s' % fields[0])
+            # print('unknown obis code: %s' % fields[0])
             continue
 
         field_name = data.obis_codemap[fields[0]]
@@ -131,10 +132,14 @@ def post_telegrams_to_api(telegrams):
 signal.signal(signal.SIGINT, signal.default_int_handler)
 
 # Define and parse command line arguments
-parser = argparse.ArgumentParser(description='Read and parse smart meter telegrams', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-parser.add_argument('-v', '--version', help='The version of of your smartmeter', choices=['4.2', '5.0'], type=str, default=SMART_METER_VERSION)
-parser.add_argument('-c', '--count', help='Amount of telegrams to handle in a single run', type=int, default=MAX_TELEGRAM_COUNT)
-parser.add_argument('mode', help='The way you will be using this script', choices=['continuous', 'cronjob'], default=MODE)
+parser = argparse.ArgumentParser(description='Read and parse smart meter telegrams',
+                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser.add_argument('-v', '--version', help='The version of of your smartmeter',
+                    choices=['4.2', '5.0'], type=str, default=SMART_METER_VERSION)
+parser.add_argument('-c', '--count', help='Amount of telegrams to handle in a single run',
+                    type=int, default=MAX_TELEGRAM_COUNT)
+parser.add_argument('mode', help='The way you will be using this script', choices=[
+                    'continuous', 'cronjob'], default=MODE)
 args = parser.parse_args()
 
 SMART_METER_VERSION = args.version if args.version else SMART_METER_VERSION
@@ -145,6 +150,9 @@ if (SMART_METER_VERSION == '4.2'):
     print(f'DSMR {args.version} uitlezen')
 else:
     print(f'ESMR {args.version} uitlezen')
+
+print(f'max telegram count: {MAX_TELEGRAM_COUNT}')
+print(f'mode: {MODE}')
 
 open_connection()
 
@@ -157,11 +165,13 @@ while CONNECTED:
             parsed_telegram = parse_telegram(lines)
             telegram_list.append(parsed_telegram)
 
+            print(f'current count: {len(telegram_list)}')
+
             if (len(telegram_list) == MAX_TELEGRAM_COUNT):
                 post_telegrams_to_api(telegram_list)
                 telegram_list = []
 
-                if (args.mode == 'cronjob'):
+                if (MODE == 'cronjob'):
                     break
 
         time.sleep(SLEEP_TIME)
