@@ -107,11 +107,10 @@ def parse_telegram(lines):
             continue
 
         if fields[0] not in data.obis_codemap:
-            # Uncomment to show unknown obis codes
-            print(f'unknown obis code: {fields[0]}')
+            print(f'unknown obis code: {working_field}')
             continue
 
-        field_name = data.obis_codemap[fields[0]]
+        field_name = data.obis_codemap[working_field]
 
         # Don't format log messages
         if field_name.endswith("log"):
