@@ -10,7 +10,6 @@ import signal
 import sys
 import time
 
-print("DSMR 5.0 P1 uitlezen")
 CONNECTED = False
 SLEEP_TIME = 10
 MAX_TELEGRAM_COUNT = 1
@@ -132,7 +131,8 @@ signal.signal(signal.SIGINT, signal.default_int_handler)
 parser = argparse.ArgumentParser(description='Read and parse smart meter telegrams', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('-v', '--version', help='The version of of your smartmeter, e.g 5.0', default='5.0')
 args = parser.parse_args()
-print(f'user has version {args.version}')
+
+print(f'E/D-SMR {args.version} uitlezen')
 
 open_connection()
 
