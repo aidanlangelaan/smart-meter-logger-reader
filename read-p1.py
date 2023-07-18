@@ -1,13 +1,14 @@
 #!/usr/bin/python3
 # Script for reading and parsing the ESMR 5.0 smart-meter telegrams
 # 2023-07 v1.0
+import argparse
 import json
+import obis_codemap as data
 import re
 import serial
 import signal
 import sys
 import time
-import obis_codemap as data
 
 print("DSMR 5.0 P1 uitlezen")
 CONNECTED = False
@@ -127,6 +128,11 @@ def post_telegrams_to_api(telegrams):
 
 # Main program
 signal.signal(signal.SIGINT, signal.default_int_handler)
+
+parser = argparse.ArgumentParser(description='Read and parse smart meter telegrams', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser.add_argument('-v', '--version', help='The version of of your smartmeter, e.g 5.0', default='5.0')
+args = parser.parse_args()
+print(f'user has version {args.version}')
 
 open_connection()
 
