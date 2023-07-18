@@ -100,9 +100,9 @@ def parse_telegram(lines):
     telegram_object = {}
 
     for line in lines:
-        fields = line.strip().replace(")", "").split("(")
+        fields = line.strip().replace(")", "").replace('\u300c', '').split("(")
 
-        if (line.strip() == "" or line.isspace() or line is None or len(line.strip()) == 0):
+        if (line.strip() == "" or line.isspace()):
             continue
 
         working_field = fields[0].strip()
