@@ -10,54 +10,52 @@ import time
 import obis_codemap as data
 
 print("DSMR 5.0 P1 uitlezen")
-connected = False
-sleep_time = 10
-max_telegram_count = 1
+CONNECTED = False
+SLEEP_TIME = 10
+MAX_TELEGRAM_COUNT = 1
 
-baudrate = 115200
-bytesize = serial.SEVENBITS
-parity = serial.PARITY_EVEN
-stopbits = serial.STOPBITS_ONE
-port = "/dev/ttyUSB0"
-
-telegram_list = []
-ser = serial.Serial()
+BAUDRATE = 115200
+BYTE_SIZE = serial.SEVENBITS
+PARITY = serial.PARITY_EVEN
+STOP_BITS = serial.STOPBITS_ONE
+PORT = "/dev/ttyUSB0"
+SERIAL = serial.Serial()
 
 def open_connection():
-    global connected
-    global ser
+    global CONNECTED
+    global SERIAL
 
     # Set serial port config
-    ser.baudrate = baudrate
-    ser.bytesize = bytesize
-    ser.parity = parity
-    ser.stopbits = stopbits
-    ser.xonxoff = 0
-    ser.rtscts = 0
-    ser.timeout = 20
-    ser.port = port
+    SERIAL.baudrate = BAUDRATE
+    SERIAL.bytesize = BYTE_SIZE
+    SERIAL.parity = PARITY
+    SERIAL.stopbits = STOP_BITS
+    SERIAL.xonxoff = 0
+    SERIAL.rtscts = 0
+    SERIAL.timeout = 20
+    SERIAL.port = PORT
 
     # Open the connection
     try:
         print('Opening connection')
-        ser.open()
-        connected = True
+        SERIAL.open()
+        CONNECTED = True
     except:
-        connected = False
-        sys.exit('Error opening %s. Program stopped.' % ser.name)
+        CONNECTED = False
+        sys.exit('Error opening %s. Program stopped.' % SERIAL.name)
 
 
 def close_connection():
-    global connected
-    global ser
+    global CONNECTED
+    global SERIAL
 
     # Close port and show status
     try:
         print('Closing connection')
-        connected = False
-        ser.close()
+        CONNECTED = False
+        SERIAL.close()
     except:
-        connected = False
+        CONNECTED = False
         print('Could not close the serial port.')
 
 
@@ -73,7 +71,7 @@ def read_telegram(ser):
             raw_line = ser.readline()
         except:
             sys.exit(
-                'Could not read from serial port %s. Program stopped.' % ser.name)
+                f'Could not read from serial port {ser.name}. Program stopped.')
 
         telegram_string = raw_line.decode()
         telegram_line = telegram_string.strip()
@@ -86,10 +84,10 @@ def read_telegram(ser):
     return telegram_lines
 
 
-def parse_telegram(telegram_lines):
+def parse_telegram(lines):
     telegram_object = {}
 
-    for line in telegram_lines:
+    for line in lines:
         fields = line.replace(")", "").split("(")
 
         if fields[0] not in data.obis_codemap:
@@ -118,10 +116,10 @@ def format_value(value):
     return value
 
 
-def post_telegrams_to_api(telegram_list):
+def post_telegrams_to_api(telegrams):
     print('Posting parsed telegrams to api')
 
-    telegram_json = json.dumps(telegram_list)
+    telegram_json = json.dumps(telegrams)
     print('telegram json: %s' % telegram_json)
 
     # TODO implement API connection
@@ -132,18 +130,20 @@ signal.signal(signal.SIGINT, signal.default_int_handler)
 
 open_connection()
 
-while connected:
-    try:
-        if (ser.inWaiting() > 0):
-            telegram_lines = read_telegram(ser)
-            telegram_object = parse_telegram(telegram_lines)
-            telegram_list.append(telegram_object)
+while CONNECTED:
+    telegram_list = []
 
-            if (len(telegram_list) == max_telegram_count):
+    try:
+        if (SERIAL.inWaiting() > 0):
+            lines = read_telegram(SERIAL)
+            parsed_telegram = parse_telegram(lines)
+            telegram_list.append(parsed_telegram)
+
+            if (len(telegram_list) == MAX_TELEGRAM_COUNT):
                 post_telegrams_to_api(telegram_list)
                 telegram_list = []
 
-        time.sleep(sleep_time)
+        time.sleep(SLEEP_TIME)
     except KeyboardInterrupt:
         print('User cancelled, stopping program')
         close_connection()
