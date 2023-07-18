@@ -99,7 +99,10 @@ def read_telegram():
 def parse_telegram(lines):
     telegram_object = {}
 
+    index = 0
     for line in lines:
+        index += 1
+
         fields = line.strip().replace(")", "").replace('\u300c', '').split("(")
 
         if (line.strip() == "" or line.isspace()):
@@ -110,7 +113,7 @@ def parse_telegram(lines):
             continue
 
         if fields[0] not in data.obis_codemap:
-            print(f'unknown obis code: {working_field}, line: {line}')
+            print(f'unknown obis code: {working_field}, line: {line}, index: {index}')
             print(json.dumps(lines))
             continue
 
