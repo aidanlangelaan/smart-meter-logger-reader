@@ -82,7 +82,7 @@ def read_telegram():
         telegram_line = telegram_string.strip()
         telegram_lines.append(telegram_line)
 
-        print(*telegram_line, sep="\n")
+        print(json.dumps(telegram_lines))
 
         if (telegram_line.startswith('!')):
             found_end = True
