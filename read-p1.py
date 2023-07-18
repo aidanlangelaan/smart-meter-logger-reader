@@ -100,7 +100,10 @@ def parse_telegram(lines):
     telegram_object = {}
 
     for line in lines:
-        fields = line.replace(")", "").split("(")
+        fields = line.strip().replace(")", "").split("(")
+
+        if (line.strip() == ''):
+            continue
 
         working_field = fields[0].strip()
         if (working_field == '' or working_field.startswith('!') or working_field.startswith('/')):
