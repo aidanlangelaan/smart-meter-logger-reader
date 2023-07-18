@@ -196,7 +196,7 @@ while CONNECTED:
                 continue
 
             parsed_telegram = parse_telegram(lines)
-            if (parsed_telegram['dsmr_version'] != ''):
+            if ('dsmr_version' in parsed_telegram):
                 telegram_list.append(parsed_telegram)
 
             if (len(telegram_list) == MAX_TELEGRAM_COUNT):
