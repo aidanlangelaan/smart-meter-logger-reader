@@ -21,48 +21,50 @@ BYTE_SIZE = serial.SEVENBITS
 PARITY = serial.PARITY_EVEN
 STOP_BITS = serial.STOPBITS_ONE
 PORT = "/dev/ttyUSB0"
-SERIAL = serial.Serial()
+SERIAL_CONNECTION = serial.Serial()
 
 
 def open_connection():
     global CONNECTED
-    global SERIAL
+    global SERIAL_CONNECTION
 
     # Set serial port config
-    SERIAL.baudrate = BAUDRATE
-    SERIAL.bytesize = BYTE_SIZE
-    SERIAL.parity = PARITY
-    SERIAL.stopbits = STOP_BITS
-    SERIAL.xonxoff = 0
-    SERIAL.rtscts = 0
-    SERIAL.timeout = 20
-    SERIAL.port = PORT
+    SERIAL_CONNECTION.baudrate = BAUDRATE
+    SERIAL_CONNECTION.bytesize = BYTE_SIZE
+    SERIAL_CONNECTION.parity = PARITY
+    SERIAL_CONNECTION.stopbits = STOP_BITS
+    SERIAL_CONNECTION.xonxoff = 0
+    SERIAL_CONNECTION.rtscts = 0
+    SERIAL_CONNECTION.timeout = 20
+    SERIAL_CONNECTION.port = PORT
 
     # Open the connection
     try:
         print('Opening connection')
-        SERIAL.open()
+        SERIAL_CONNECTION.open()
         CONNECTED = True
     except:
         CONNECTED = False
-        sys.exit('Error opening %s. Program stopped.' % SERIAL.name)
+        sys.exit(f'Error opening {SERIAL_CONNECTION.name}. Program stopped.')
 
 
 def close_connection():
     global CONNECTED
-    global SERIAL
+    global SERIAL_CONNECTION
 
     # Close port and show status
     try:
         print('Closing connection')
         CONNECTED = False
-        SERIAL.close()
+        SERIAL_CONNECTION.close()
     except:
         CONNECTED = False
         print('Could not close the serial port.')
 
 
-def read_telegram(ser):
+def read_telegram():
+    global SERIAL_CONNECTION
+
     found_end = False
     telegram_lines = []
 
@@ -71,10 +73,10 @@ def read_telegram(ser):
         telegram_line = ''
 
         try:
-            raw_line = ser.readline()
+            raw_line = SERIAL_CONNECTION.readline()
         except:
             sys.exit(
-                f'Could not read from serial port {ser.name}. Program stopped.')
+                f'Could not read from serial port {SERIAL_CONNECTION.name}. Program stopped.')
 
         telegram_string = raw_line.decode()
         telegram_line = telegram_string.strip()
@@ -156,12 +158,11 @@ print(f'mode: {MODE}')
 
 open_connection()
 
+telegram_list = []
 while CONNECTED:
-    telegram_list = []
-
     try:
-        if (SERIAL.inWaiting() > 0):
-            lines = read_telegram(SERIAL)
+        if (SERIAL_CONNECTION.inWaiting() > 0):
+            lines = read_telegram()
             parsed_telegram = parse_telegram(lines)
             telegram_list.append(parsed_telegram)
 
