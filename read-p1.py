@@ -102,7 +102,7 @@ def parse_telegram(lines):
     for line in lines:
         fields = line.strip().replace(")", "").split("(")
 
-        if (line.strip() == "" or line.isspace() or line == None):
+        if (line.strip() == "" or line.isspace() or line is None or len(line.strip()) == 0):
             continue
 
         working_field = fields[0].strip()
