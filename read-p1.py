@@ -64,6 +64,7 @@ def close_connection():
 
 def read_telegram():
     global SERIAL_CONNECTION
+    error_count = 0;
 
     found_end = False
     telegram_lines = []
@@ -72,17 +73,21 @@ def read_telegram():
     while not found_end:
         telegram_line = ''
 
+        if (error_count > 10):
+            return None;
+
         try:
             raw_line = SERIAL_CONNECTION.readline()
         except:
-            sys.exit(
-                f'Could not read from serial port {SERIAL_CONNECTION.name}. Program stopped.')
+            print(f'Failed to read from serial port {SERIAL_CONNECTION.name}')
+            error_count += 1
+            continue
 
         telegram_string = raw_line.decode()
         telegram_line = telegram_string.strip()
-        telegram_lines.append(telegram_line)
 
-        print(json.dumps(telegram_lines))
+        if (telegram_line != ''):
+            telegram_lines.append(telegram_line)
 
         if (telegram_line.startswith('!')):
             found_end = True
@@ -177,11 +182,12 @@ while CONNECTED:
     try:
         if (SERIAL_CONNECTION.inWaiting() > 0):
             lines = read_telegram()
-            if (lines == None):
+            if (lines is None):
                 continue
 
             parsed_telegram = parse_telegram(lines)
-            telegram_list.append(parsed_telegram)
+            if (parsed_telegram['dsmr_version'] != ''):
+                telegram_list.append(parsed_telegram)
 
             if (len(telegram_list) == MAX_TELEGRAM_COUNT):
                 post_telegrams_to_api(telegram_list)
