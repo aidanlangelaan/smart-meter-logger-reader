@@ -74,6 +74,8 @@ def read_telegram():
 
         try:
             raw_line = SERIAL_CONNECTION.readline()
+
+            print(raw_line)
         except:
             sys.exit(
                 f'Could not read from serial port {SERIAL_CONNECTION.name}. Program stopped.')
@@ -171,6 +173,9 @@ while CONNECTED:
     try:
         if (SERIAL_CONNECTION.inWaiting() > 0):
             lines = read_telegram()
+            if (lines == None):
+                continue
+
             parsed_telegram = parse_telegram(lines)
             telegram_list.append(parsed_telegram)
 
