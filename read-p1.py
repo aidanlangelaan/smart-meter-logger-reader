@@ -111,6 +111,7 @@ def parse_telegram(lines):
 
         if fields[0] not in data.obis_codemap:
             print(f'unknown obis code: {working_field}, line: {line}')
+            print(json.dumps(lines))
             continue
 
         field_name = data.obis_codemap[working_field]
