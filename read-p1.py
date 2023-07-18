@@ -74,8 +74,6 @@ def read_telegram():
 
         try:
             raw_line = SERIAL_CONNECTION.readline()
-
-            print(raw_line)
         except:
             sys.exit(
                 f'Could not read from serial port {SERIAL_CONNECTION.name}. Program stopped.')
@@ -83,6 +81,8 @@ def read_telegram():
         telegram_string = raw_line.decode()
         telegram_line = telegram_string.strip()
         telegram_lines.append(telegram_line)
+
+        print(*telegram_line, sep = "\n")
 
         if (telegram_line.startswith('!')):
             found_end = True
