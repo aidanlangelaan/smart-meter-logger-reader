@@ -97,7 +97,8 @@ def parse_telegram(lines):
     for line in lines:
         fields = line.replace(")", "").split("(")
 
-        if (fields[0].strip() == ''):
+        working_field = fields[0].strip()
+        if (working_field == '' or working_field.startswith('!') or working_field.startswith('/')):
             continue
 
         if fields[0] not in data.obis_codemap:
