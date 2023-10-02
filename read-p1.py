@@ -144,7 +144,9 @@ def format_value(value):
     # handle timestamps
     if len(value) > 1 and value[-1] == 'S':
         value = value.rstrip("S")
-        return datetime.strptime(value, '%y%m%d%H%M%S')
+        date_object = datetime.strptime(value, '%y%m%d%H%M%S')
+
+        return date_object.strftime('%Y-%m-%dT%H:%M:%S.%f%z')
     else:
         # attempt to parse nummeric values or return string as default
         if value.replace(".", "").isnumeric():
