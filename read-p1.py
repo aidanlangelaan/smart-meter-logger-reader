@@ -139,7 +139,20 @@ def format_value(value):
     value = re.sub("^0*([0-9]\.)", "\\1", value)
     # remove trailing unit's like "*kWh", "*kW", "*V", "*A", "*m3", "*s",...
     value = re.sub("\*.*", "", value)
-    return value
+
+    # attempt to nummeric values
+    if value.replace(".", "").isnumeric():
+        try:
+            return int(value)
+        except ValueError:
+            pass
+
+        try:
+            return float(value)
+        except ValueError:
+            pass
+
+    return str(value)
 
 
 def post_telegrams_to_api(telegrams):
