@@ -17,6 +17,8 @@ cd rpi-smartmeter-logger
 sudo git clone https://github.com/aidanlangelaan/rpi-smartmeter-logger.git .
 ```
 
+Git may give an exception (either on clone or a later pull) such as "detected dubious ownership in repository". To fix this and allow further pull/pushes execute the following command: `git config --global --add safe.directory /bin/rpi-smartmeter-logger`
+
 ## Step 2: Install the required packages
 
 The script uses 2 packages to run. To install these run the following command:
@@ -24,6 +26,19 @@ The script uses 2 packages to run. To install these run the following command:
 `pip install -r requirements.txt`
 
 ## Step 3: Run the application
+
+### Execution arguments
+
+To run the script there's a couple of arguments that can or must be passed allong. You can always check what these are by calling `python read-p1.py -h` which will show the help text with all required and optional arguments. Please note that for some arguments only specific values may be used.
+
+| argument            | required | description                                   | values              | default      |
+| ------------------- | -------- | --------------------------------------------- | ------------------- | ------------ |
+| continuous, cronjob | Yes      | The way you will be using this script         | continuous, cronjob |              |
+| -v, --version       | No       | The version of of your smartmeter             | 4.2, 5.0            | 5.0          |
+| -c, --count         | No       | Amount of telegrams to handle in a single run | Any integer > 0     | 1            |
+| -p, --port          | No       | Which port to connect to                      | string              | /dev/ttyUSB0 |
+
+### Mode
 
 We must first decide on how to run the application, this can be done in 2 different ways:
 
@@ -35,10 +50,14 @@ We must first decide on how to run the application, this can be done in 2 differ
 
    Use a cronjob to execute the script, based on a cron schedule. With this method a telegram-count can also be added to include x telegrams before posting. The advantage is that should the RPi restart, the cronjob will automatically continue to trigger the application without any manual intervention.
 
-### Continuous loop
+#### Continuous loop
 
-TODO
+As mentioned this is great for testing purposes, as you can easily check the output of the script and the json being posted. To start this mode use the following command (check the table above for the optional arguments you can pass along):
 
-### Cronjob
+`python read-p1.py continuous`
+
+The application will now start and run until you kill the application (`ctrl+c`) or the RPi is turned off. Please note that the moment of killing may produce unexpected results if it's in the middle of posting.
+
+#### Cronjob
 
 TODO

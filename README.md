@@ -23,3 +23,6 @@ For making the script I made use of the various sources listed bellow.
 - [Tweakers.net - Slimme meter uitlezen via P1-poort](https://gathering.tweakers.net/forum/list_messages/1578510)
 - [Ge Janssen - Slimme meter uitlezen met Raspberry Pi](http://gejanssen.com/howto/Slimme-meter-uitlezen/)
 - [www.kapper.com - P1 energy meter reader using python in Docker](https://www.kaper.com/software/p1-energy-meter-reader-using-python-in-docker/)
+- [domoticx.com - P1 poort slimme meter (hardware)](https://domoticx.com/p1-poort-slimme-meter-hardware/)
+- [www.fluvius.be - Digitale Meters in
+  Vlaanderen](https://www.fluvius.be/sites/fluvius/files/2020-01/dmk-demo-v2.1-rtc.pdf)
