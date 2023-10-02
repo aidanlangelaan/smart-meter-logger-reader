@@ -142,7 +142,7 @@ def format_value(value):
     value = re.sub("\*.*", "", value)
 
     # handle timestamps
-    if value[-1] == 'S':
+    if len(value) > 1 and value[-1] == 'S':
         value = value.rstrip("S")
         return datetime.strptime(value, '%y%m%d%H%M%S')
     else:
