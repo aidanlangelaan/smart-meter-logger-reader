@@ -9,6 +9,7 @@ import sys
 import time
 import serial
 import obis_codemap as data
+from datetime import datetime
 
 CONNECTED = False
 SLEEP_TIME = 1
@@ -140,19 +141,24 @@ def format_value(value):
     # remove trailing unit's like "*kWh", "*kW", "*V", "*A", "*m3", "*s",...
     value = re.sub("\*.*", "", value)
 
-    # attempt to nummeric values
-    if value.replace(".", "").isnumeric():
-        try:
-            return int(value)
-        except ValueError:
-            pass
+    # handle timestamps
+    if value[-1] == 'S':
+        value = value.rstrip("S")
+        return datetime.strptime(value, '%y%m%d%H%M%S')
+    else:
+        # attempt to parse nummeric values or return string as default
+        if value.replace(".", "").isnumeric():
+            try:
+                return int(value)
+            except ValueError:
+                pass
 
-        try:
-            return float(value)
-        except ValueError:
-            pass
+            try:
+                return float(value)
+            except ValueError:
+                pass
 
-    return str(value)
+        return str(value)
 
 
 def post_telegrams_to_api(telegrams):
