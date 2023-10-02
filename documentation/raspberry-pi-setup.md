@@ -65,7 +65,8 @@ This shows me all network devices, the type, state and connection. As I'm alteri
 sudo nmcli con edit {CONNECTION_VALUE}
 set ipv4.method manual
 set ipv4.address 192.168.1.3/24
-set ipv4.gateway 192.168.1.1
+set ipv4.gateway 192.168.1.254
+set ipv4.dns 192.168.1.100  # do this if you want to use your own DNS server instead of the auto-set by DHCP
 save
 quit
 ```
