@@ -141,12 +141,15 @@ def format_value(value):
     # remove trailing unit's like "*kWh", "*kW", "*V", "*A", "*m3", "*s",...
     value = re.sub("\*.*", "", value)
 
-    # handle timestamps
     if len(value) > 1 and value[-1] == 'S':
+        # handle timestamps
         value = value.rstrip("S")
         date_object = datetime.strptime(value, '%y%m%d%H%M%S')
 
-        return date_object.strftime('%Y-%m-%dT%H:%M:%S.%f%z')
+        return date_object.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+    elif len(value) > 20:
+        # handle meter ids
+        return str(value)
     else:
         # attempt to parse nummeric values or return string as default
         if value.replace(".", "").isnumeric():
