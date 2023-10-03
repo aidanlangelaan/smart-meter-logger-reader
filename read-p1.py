@@ -127,13 +127,16 @@ def parse_telegram(lines):
         # Don't format log messages
         if field_name.endswith("log"):
             telegram_object[field_name] = str(fields[1:])
+        # Format mbus values
+        elif field_name.startswith("value") and field_name.endswith("value"):
+            telegram_object[field_name] = format_mbus_value(fields[1:])
         else:
-            telegram_object[field_name] = format_value(fields[1])
+            telegram_object[field_name] = format_generic_value(fields[1])
 
     return telegram_object
 
 
-def format_value(value):
+def format_generic_value(value):
     # remove leading zeroes for numbers like 000123.123
     value = re.sub("^0*([1-9])", "\\1", value)
     # remove leading zeroes (except the last one) for numbers like 000000.123
@@ -164,6 +167,12 @@ def format_value(value):
                 pass
 
         return str(value)
+
+
+def format_mbus_value(value):
+    print(f'format_mbus_value: {value}')
+
+    return str(value)
 
 
 def post_telegrams_to_api(telegrams):
