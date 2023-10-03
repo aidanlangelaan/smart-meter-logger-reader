@@ -170,6 +170,10 @@ def format_generic_value(value):
 
 
 def format_mbus_value(value):
+    # currently only able to test with gas meter and corresponding format, e.g. (231003094003S)(04506.567*m3)
+    # so may not work correctly with other mbus values
+
+    # second part contains the actual value, first part is a timestamp
     value = value[1]
 
     # remove leading zeroes for numbers like 000123.123
@@ -178,8 +182,6 @@ def format_mbus_value(value):
     value = re.sub("^0*([0-9]\.)", "\\1", value)
     # remove trailing unit's like "*kWh", "*kW", "*V", "*A", "*m3", "*s",...
     value = re.sub("\*.*", "", value)
-
-    print(f'format_mbus_value: {value}')
 
     return str(value)
 
