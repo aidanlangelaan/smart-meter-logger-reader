@@ -128,7 +128,7 @@ def parse_telegram(lines):
         if field_name.endswith("log"):
             telegram_object[field_name] = str(fields[1:])
         # Format mbus values
-        elif field_name.startswith("value") and field_name.endswith("value"):
+        elif field_name.startswith("mbus") and field_name.endswith("value"):
             telegram_object[field_name] = format_mbus_value(fields[1:])
         else:
             telegram_object[field_name] = format_generic_value(fields[1])
