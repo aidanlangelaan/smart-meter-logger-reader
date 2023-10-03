@@ -183,7 +183,10 @@ def format_mbus_value(value):
     # remove trailing unit's like "*kWh", "*kW", "*V", "*A", "*m3", "*s",...
     value = re.sub("\*.*", "", value)
 
-    return str(value)
+    try:
+        return float(value)
+    except ValueError:
+        return str(value)
 
 
 def post_telegrams_to_api(telegrams):
