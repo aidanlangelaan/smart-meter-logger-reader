@@ -170,6 +170,15 @@ def format_generic_value(value):
 
 
 def format_mbus_value(value):
+    value = value[1]
+
+    # remove leading zeroes for numbers like 000123.123
+    value = re.sub("^0*([1-9])", "\\1", value)
+    # remove leading zeroes (except the last one) for numbers like 000000.123
+    value = re.sub("^0*([0-9]\.)", "\\1", value)
+    # remove trailing unit's like "*kWh", "*kW", "*V", "*A", "*m3", "*s",...
+    value = re.sub("\*.*", "", value)
+
     print(f'format_mbus_value: {value}')
 
     return str(value)
