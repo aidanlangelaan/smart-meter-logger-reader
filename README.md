@@ -26,3 +26,4 @@ For making the script I made use of the various sources listed bellow.
 - [domoticx.com - P1 poort slimme meter (hardware)](https://domoticx.com/p1-poort-slimme-meter-hardware/)
 - [www.fluvius.be - Digitale Meters in
   Vlaanderen](https://www.fluvius.be/sites/fluvius/files/2020-01/dmk-demo-v2.1-rtc.pdf)
+- [Vives Connected Digital Energy Meter - Communication protocol](https://www.cdem.be/13_technical/#communication-protocol)

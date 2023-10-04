@@ -12,7 +12,7 @@ import obis_codemap as data
 from datetime import datetime
 
 CONNECTED = False
-SLEEP_TIME = 1
+SLEEP_TIME = 60
 MAX_TELEGRAM_COUNT = 1
 MODE = 'cronjob'
 
@@ -208,6 +208,8 @@ parser.add_argument('-v', '--version', help='The version of of your smartmeter',
                     choices=['4.2', '5.0'], type=str, default=SMART_METER_VERSION)
 parser.add_argument('-c', '--count', help='Amount of telegrams to handle in a single run',
                     type=int, default=MAX_TELEGRAM_COUNT)
+parser.add_argument('-s', '--sleep', help='Amount of seconds to sleep before the next (only works in continuous mode!)',
+                    type=int, default=SLEEP_TIME)
 parser.add_argument('-p', '--port', help='Which port to connect to',
                     type=str, default=PORT)
 parser.add_argument('mode', help='The way you will be using this script', choices=[
@@ -216,6 +218,7 @@ args = parser.parse_args()
 
 SMART_METER_VERSION = args.version if args.version else SMART_METER_VERSION
 MAX_TELEGRAM_COUNT = args.count if args.count else MAX_TELEGRAM_COUNT
+SLEEP_TIME = args.sleep if args.sleep else SLEEP_TIME
 PORT = args.port if args.port else PORT
 MODE = args.mode if args.mode else MODE
 
