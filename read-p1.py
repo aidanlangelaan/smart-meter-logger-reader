@@ -147,6 +147,8 @@ def format_generic_value(value):
     if len(value) > 1 and value[-1] == 'S':
         # handle timestamps
         value = value.rstrip("S")
+        print(str(value))
+
         date_object = datetime.strptime(value, '%y%m%d%H%M%S')
 
         return date_object.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
