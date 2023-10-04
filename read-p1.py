@@ -245,7 +245,7 @@ while CONNECTED:
         if (SERIAL_CONNECTION.inWaiting() > 0):
             lines = read_telegram()
 
-            json.dumps(lines)
+            print(json.dumps(lines))
 
             if (lines is None):
                 continue
