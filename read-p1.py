@@ -193,12 +193,12 @@ def format_mbus_value(value):
 def post_telegrams_to_api(telegrams):
     print('Posting parsed telegrams to api')
 
-    telegram_json = json.dumps(telegrams)
+    # telegram_json = json.dumps(telegrams)
     # print(telegram_json)
 
     # Post telegrams to api
     response = requests.post(
-        "http://192.168.2.100:9500/api/Telegram/create-many", data=telegram_json)
+        "http://192.168.2.100:9500/api/Telegram/create-many", json=telegrams)
     if response.status_code != 200:
         print(f'Error posting telegrams to api: {response.status_code}')
         print(response.text)
