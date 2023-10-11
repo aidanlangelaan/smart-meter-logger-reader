@@ -197,6 +197,8 @@ def post_telegrams_to_api(telegrams):
     # print(telegram_json)
 
     # Post telegrams to api
+
+    # TODO: make api url configurable
     response = requests.post(
         "http://192.168.2.100:9500/api/Telegram/create-many", json=telegrams)
     if response.status_code != 200:
@@ -224,11 +226,14 @@ parser.add_argument('mode', help='The way you will be using this script', choice
                     'continuous', 'cronjob'], default=MODE)
 args = parser.parse_args()
 
+MODE = args.mode if args.mode else MODE
 SMART_METER_VERSION = args.version if args.version else SMART_METER_VERSION
 MAX_TELEGRAM_COUNT = args.count if args.count else MAX_TELEGRAM_COUNT
 SLEEP_TIME = args.sleep if args.sleep else SLEEP_TIME
 PORT = args.port if args.port else PORT
-MODE = args.mode if args.mode else MODE
+
+if MODE == 'cronjob':
+    SLEEP_TIME = 5
 
 if (SMART_METER_VERSION == '4.2'):
     print(f'DSMR {args.version} uitlezen')
