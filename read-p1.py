@@ -7,6 +7,7 @@ import re
 import signal
 import sys
 import time
+import requests
 import serial
 import obis_codemap as data
 from datetime import datetime
@@ -147,8 +148,6 @@ def format_generic_value(value):
     if len(value) > 1 and value[-1] == 'S':
         # handle timestamps
         value = value.rstrip("S")
-        print(str(value))
-
         date_object = datetime.strptime(value, '%y%m%d%H%M%S')
 
         return date_object.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
@@ -195,9 +194,16 @@ def post_telegrams_to_api(telegrams):
     print('Posting parsed telegrams to api')
 
     telegram_json = json.dumps(telegrams)
-    print(telegram_json)
+    # print(telegram_json)
 
-    # TODO implement API connection
+    # Post telegrams to api
+    response = requests.post(
+        "http://langelaan-nas.local:9500/api/Telegram/create-many", json=telegram_json)
+    if response.status_code != 200:
+        print(f'Error posting telegrams to api: {response.status_code}')
+        print(response.text)
+    else:
+        print('Telegrams posted to api')
 
 
 # Main program
@@ -244,8 +250,6 @@ while CONNECTED:
     try:
         if (SERIAL_CONNECTION.inWaiting() > 0):
             lines = read_telegram()
-
-            print(json.dumps(lines))
 
             if (lines is None):
                 continue
