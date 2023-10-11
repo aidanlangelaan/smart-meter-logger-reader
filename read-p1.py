@@ -198,7 +198,7 @@ def post_telegrams_to_api(telegrams):
 
     # Post telegrams to api
     response = requests.post(
-        "http://192.168.2.100:9500/api/Telegram/create-many", json=telegram_json)
+        "http://192.168.2.100:9500/api/Telegram/create-many", data=telegram_json)
     if response.status_code != 200:
         print(f'Error posting telegrams to api: {response.status_code}')
         print(response.text)
