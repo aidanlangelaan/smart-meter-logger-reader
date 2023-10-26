@@ -60,4 +60,21 @@ The application will now start and run until you kill the application (`ctrl+c`)
 
 #### Cronjob
 
-TODO
+In preporation for setting up the cronjob (using crontab), note the following:
+
+- installation location for Python (default: `/usr/bin/python`)
+- absolute path to the script (my setup: `/bin/smart-meter-logger/read-p1.py`)
+- cron schedule to use
+
+For the schedule I make use of [crontab guru](https://crontab.guru/). As I want the script to run every 10 minutes, using the editor this resulted in ` */10 * * * *`.
+
+1. Run `crontab -e`
+2. If it's the first time using crontab, it will create a new one and ask you which editor to use. My preference was nano (1)
+3. Enter your cronjob in this order: `{cron schedule} {action to perform}`. For me this was the result:
+
+   `*/10 * * * * /usr/bin/python /bin/smart-meter-logger/read-p1.py cronjob`
+
+4. Leave file using ctrl+X
+5. Save file when asked, confirm with Y
+
+You can now check your database to validate if the cronjob is working.
