@@ -1,4 +1,4 @@
-# rpi-smartmeter-logger
+# smart-meter-logger-reader
 
 This repo contains a python script for connecting to and reading telegrams from the ISKRA AM550 smart meter (ESMR 5.0). For this purpose I have setup a Raspberry Pi 4B which is connected to the smart meter by a P1 cable.
 
