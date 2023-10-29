@@ -25,7 +25,15 @@ The script uses 2 packages to run. To install these run the following command:
 
 `pip install -r requirements.txt`
 
-## Step 3: Run the application
+## Step 3: alter config file
+
+The project contains a config.py file, which is used for configuring environment specific settings. This way we can for example use alternative urls for production or staging. Alter this file as following:
+
+`nano config.py`
+
+Alter the environment and api_url setting, then save using `ctrl+X` and confirming with `y`
+
+## Step 4: Run the application
 
 ### Execution arguments
 
@@ -37,6 +45,7 @@ To run the script there's a couple of arguments that can or must be passed allon
 | -v, --version       | No       | The version of of your smartmeter             | 4.2, 5.0            | 5.0          |
 | -c, --count         | No       | Amount of telegrams to handle in a single run | Any integer > 0     | 1            |
 | -p, --port          | No       | Which port to connect to                      | string              | /dev/ttyUSB0 |
+| -d, --debug         | No       | Enables debug printing of raw values          | boolean             | False        |
 
 ### Mode
 

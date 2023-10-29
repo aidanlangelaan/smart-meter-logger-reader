@@ -147,9 +147,9 @@ def format_generic_value(value):
     # remove trailing unit's like "*kWh", "*kW", "*V", "*A", "*m3", "*s",...
     value = re.sub("\*.*", "", value)
 
-    if len(value) > 1 and value[-1] == 'S':
+    if len(value) > 1 and (value[-1] == 'S' or value[-1] == 'W'):
         # handle timestamps
-        value = value.rstrip("S")
+        value = value.rstrip("S").rstrip("W")
         date_object = datetime.strptime(value, '%y%m%d%H%M%S')
 
         return date_object.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
