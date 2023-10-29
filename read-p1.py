@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # Script for reading and parsing smart-meter telegrams
-# 2023-07 v1.0
+# 2023-10 v1.0
 import argparse
 import json
 import re
@@ -10,12 +10,14 @@ import time
 import requests
 import serial
 import obis_codemap as data
+import config
 from datetime import datetime
 
 CONNECTED = False
 SLEEP_TIME = 60
 MAX_TELEGRAM_COUNT = 1
 MODE = 'cronjob'
+DEBUG = False
 
 SMART_METER_VERSION = '5.0'
 BAUDRATE = 115200
@@ -145,9 +147,9 @@ def format_generic_value(value):
     # remove trailing unit's like "*kWh", "*kW", "*V", "*A", "*m3", "*s",...
     value = re.sub("\*.*", "", value)
 
-    if len(value) > 1 and value[-1] == 'S':
+    if len(value) > 1 and (value[-1] == 'S' or value[-1] == 'W'):
         # handle timestamps
-        value = value.rstrip("S")
+        value = value.rstrip("S").rstrip("W")
         date_object = datetime.strptime(value, '%y%m%d%H%M%S')
 
         return date_object.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
@@ -193,15 +195,15 @@ def format_mbus_value(value):
 def post_telegrams_to_api(telegrams):
     print('Posting parsed telegrams to api')
 
-    # telegram_json = json.dumps(telegrams)
-    # print(telegram_json)
+    if (DEBUG):
+        telegram_json = json.dumps(telegrams)
+        print(telegram_json)
 
     # Post telegrams to api
 
-    # TODO: make api url configurable
     response = requests.post(
-        "http://192.168.2.100:9500/api/Telegram/create-many", json=telegrams)
-    if response.status_code != 200:
+        config.app_settings['api_url'] + 'Telegram/create-many', json=telegrams)
+    if response.status_code != 201:
         print(f'Error posting telegrams to api: {response.status_code}')
         print(response.text)
     else:
@@ -222,8 +224,11 @@ parser.add_argument('-s', '--sleep', help='Amount of seconds to sleep before the
                     type=int, default=SLEEP_TIME)
 parser.add_argument('-p', '--port', help='Which port to connect to',
                     type=str, default=PORT)
+parser.add_argument('-d', '--debug', help='Whether to run in debug mode',
+                    type=bool, default=DEBUG)
 parser.add_argument('mode', help='The way you will be using this script', choices=[
                     'continuous', 'cronjob'], default=MODE)
+
 args = parser.parse_args()
 
 MODE = args.mode if args.mode else MODE
@@ -231,6 +236,7 @@ SMART_METER_VERSION = args.version if args.version else SMART_METER_VERSION
 MAX_TELEGRAM_COUNT = args.count if args.count else MAX_TELEGRAM_COUNT
 SLEEP_TIME = args.sleep if args.sleep else SLEEP_TIME
 PORT = args.port if args.port else PORT
+DEBUG = args.debug if args.debug else DEBUG
 
 if MODE == 'cronjob':
     SLEEP_TIME = 5
@@ -260,6 +266,10 @@ while CONNECTED:
                 continue
 
             parsed_telegram = parse_telegram(lines)
+
+            if (DEBUG):
+                print(json.dumps(parsed_telegram, indent=4))
+
             if ('dsmr_version' in parsed_telegram):
                 telegram_list.append(parsed_telegram)
 
