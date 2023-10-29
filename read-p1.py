@@ -203,7 +203,7 @@ def post_telegrams_to_api(telegrams):
 
     response = requests.post(
         config.app_settings['api_url'] + 'Telegram/create-many', json=telegrams)
-    if response.status_code != 200:
+    if response.status_code != 201:
         print(f'Error posting telegrams to api: {response.status_code}')
         print(response.text)
     else:
